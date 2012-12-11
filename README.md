@@ -9,3 +9,10 @@ Install [RethinkDB](http://rethinkdb.com) using [Vagrant](http://vagrantup.com).
 ## RethinkDB Dashboard
 By default, you access the dashboard here:  
 [http://localhost:8080/](http://localhost:8080/)
+
+## Multiple servers
+There are 3 VMs inside the Vagrantfile, so that you can play around with Replication and Sharding as well.
+The machines can be reached by:
+
+* localhost:8080-8082
+* 10.10.10.10, 10.10.10.11, 10.10.10.12

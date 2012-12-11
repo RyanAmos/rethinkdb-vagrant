@@ -16,4 +16,4 @@ then
   exit 1;
 fi
 
-vagrant up
+vagrant up master
