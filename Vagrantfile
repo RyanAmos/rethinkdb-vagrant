@@ -10,10 +10,8 @@ Vagrant::Config.run do |config|
 
 	config.ssh.username = "vagrant"
 	config.vm.network :bridged
-	config.vm.forward_port 22, 2222
 	config.vm.forward_port 8080, 8080
 	config.vm.forward_port 28015, 28015
-	config.vm.forward_port 29015, 29015
 
 	config.vm.provision :shell do |sh|
 		sh.inline = <<-EOF
