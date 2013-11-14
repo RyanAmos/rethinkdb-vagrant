@@ -1,33 +1,45 @@
-Vagrant::Config.run do |config|
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	# Ubuntu 12.04, 64 bit
-	config.vm.box     = "precise64"
-	config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+  config.vm.box     = 'precise64'
+  config.vm.box_url = 'http://files.vagrantup.com/precise64.box'
 
-	# changing nictype partially helps with Vagrant issue #516, VirtualBox NAT interface chokes when
-	# of slow outgoing connections is large (in dozens or more).
-	# see https://github.com/mitchellh/vagrant/issues/912 regarding: --rtcuseutc
-	config.vm.customize ["modifyvm", :id, "--nictype1", "Am79C973", "--memory", "512", "--ioapic", "on", "--rtcuseutc", "on"]
+  # Providers
+  config.vm.provider :virtualbox do |p|
+    p.vm.customize ['modifyvm', :id, '--memory', '512', '--ioapic', 'on']
+  end
 
-	config.ssh.username = "vagrant"
-	config.vm.network :bridged
-	config.vm.forward_port 8080, 8080
-	config.vm.forward_port 28015, 28015
+  # SSH
+  config.ssh.username = "vagrant"
 
-	config.vm.provision :shell do |sh|
-		sh.inline = <<-EOF
-			export DEBIAN_FRONTEND=noninteractive;
-			apt-get update --assume-yes;
-			apt-get install --assume-yes python-software-properties;
-			add-apt-repository --yes ppa:rethinkdb/ppa 2>&1;
-			apt-get update --assume-yes;
-			apt-get install --assume-yes rethinkdb;
+  # Port Forwarding
+  config.vm.network :forwarded_port, guest: 8080, host: 8080
+  config.vm.network :forwarded_port, guest: 28015, host: 28015
+  config.vm.network :forwarded_port, guest: 29015, host: 29015
 
-			sed -e 's/somebody/root/g' -e 's/somegroup/root/g' /etc/rethinkdb/default.conf.sample > /etc/rethinkdb/instances.d/default.conf
+  # Attempt to 'guess' the default network
+  config.vm.network :public_network, :bridge => 'en0: Wi-Fi (AirPort)'
 
-			rethinkdb create -d /var/lib/rethinkdb/instances.d/default 2>&1;
+  # Provisioning
+  config.vm.provision :shell do |sh|
+    sh.inline = <<-EOF
+      export DEBIAN_FRONTEND=noninteractive;
+      apt-get update --assume-yes;
+      apt-get install --assume-yes python-software-properties;
+      add-apt-repository --yes ppa:rethinkdb/ppa 2>&1;
+      apt-get update --assume-yes;
+      apt-get install --assume-yes rethinkdb;
 
-			service rethinkdb start;
-		EOF
-	end
+      sed -e 's/somebody/root/g' -e 's/somegroup/root/g' -e 's/# bind=127.0.0.1/bind=all/g' /etc/rethinkdb/default.conf.sample > /etc/rethinkdb/instances.d/default.conf
 
+      rethinkdb create -d /var/lib/rethinkdb/instances.d/default 2>&1;
+
+      service rethinkdb start;
+    EOF
+  end
 end
