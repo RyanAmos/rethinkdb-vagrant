@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Providers
   config.vm.provider :virtualbox do |p|
-    p.vm.customize ['modifyvm', :id, '--memory', '512', '--ioapic', 'on']
+    p.customize ['modifyvm', :id, '--memory', '512', '--ioapic', 'on']
   end
 
   # SSH
