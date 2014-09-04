@@ -40,6 +40,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       rethinkdb create -d /var/lib/rethinkdb/instances.d/default 2>&1;
 
       service rethinkdb start;
+	  
+	  #Install python driver
+	  apt-get install --assume-yes python-pip;
+	  pip install rethinkdb;
     EOF
   end
 end
