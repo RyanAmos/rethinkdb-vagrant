@@ -32,6 +32,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       apt-get update --assume-yes;
       apt-get install --assume-yes python-software-properties;
       add-apt-repository --yes ppa:rethinkdb/ppa 2>&1;
+	  source /etc/lsb-release && echo "deb http://download.rethinkdb.com/apt $DISTRIB_CODENAME main" | sudo tee /etc/apt/sources.list.d/rethinkdb.list;
+	  wget -qO- http://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add -;
       apt-get update --assume-yes;
       apt-get install --assume-yes rethinkdb;
 
