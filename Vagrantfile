@@ -1,13 +1,14 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-VAGRANTFILE_API_VERSION = "2"
+# Ensure a minimum Vagrant version to prevent potential issues.
+Vagrant.require_version '~> 1.5.0'
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	# Ubuntu 12.04, 64 bit
   config.vm.box     = 'precise64'
   config.vm.box_url = 'http://files.vagrantup.com/precise64.box'
+# Configure using Vagrant's version 2 API/syntax.
+Vagrant.configure(2) do |config|
 
   # Providers
   config.vm.provider :virtualbox do |p|
@@ -15,15 +16,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # SSH
-  config.ssh.username = "vagrant"
+  config.ssh.username = 'vagrant'
 
   # Port Forwarding
-  config.vm.network :forwarded_port, guest: 8080, host: 8080
+  config.vm.network :forwarded_port, guest: 8080,  host: 8080
   config.vm.network :forwarded_port, guest: 28015, host: 28015
   config.vm.network :forwarded_port, guest: 29015, host: 29015
 
   # Attempt to 'guess' the default network
-  config.vm.network :public_network, :bridge => 'en0: Wi-Fi (AirPort)'
+  config.vm.network :public_network, bridge: 'en0: Wi-Fi (AirPort)'
 
   # Provisioning
   config.vm.provision :shell do |sh|
