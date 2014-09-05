@@ -4,11 +4,11 @@
 # Ensure a minimum Vagrant version to prevent potential issues.
 Vagrant.require_version '~> 1.5.0'
 
-	# Ubuntu 12.04, 64 bit
-  config.vm.box     = 'precise64'
-  config.vm.box_url = 'http://files.vagrantup.com/precise64.box'
 # Configure using Vagrant's version 2 API/syntax.
 Vagrant.configure(2) do |config|
+  # Ubuntu 14.04, 64 bit
+  config.vm.box         = 'ubuntu/trusty64'
+  config.vm.box_version = '~> 14.04'
 
   # Providers
   config.vm.provider :virtualbox do |p|
@@ -30,16 +30,16 @@ Vagrant.configure(2) do |config|
   config.vm.provision :shell do |sh|
     sh.inline = <<-EOF
       export DEBIAN_FRONTEND=noninteractive;
+
+      # Add RethinkDB Source
+      apt-key adv --fetch-keys http://download.rethinkdb.com/apt/pubkey.gpg 2>&1;
+      echo "deb http://download.rethinkdb.com/apt $(lsb_release -sc) main" > /etc/apt/sources.list.d/rethinkdb.list;
       apt-get update --assume-yes;
-      apt-get install --assume-yes python-software-properties;
-      add-apt-repository --yes ppa:rethinkdb/ppa 2>&1;
-      apt-get update --assume-yes;
+
+      # RethinkDB Install & Setup
       apt-get install --assume-yes rethinkdb;
-
-      sed -e 's/somebody/root/g' -e 's/somegroup/root/g' -e 's/# bind=127.0.0.1/bind=all/g' /etc/rethinkdb/default.conf.sample > /etc/rethinkdb/instances.d/default.conf
-
+      sed -e 's/# bind=127.0.0.1/bind=all/g' /etc/rethinkdb/default.conf.sample > /etc/rethinkdb/instances.d/default.conf;
       rethinkdb create -d /var/lib/rethinkdb/instances.d/default 2>&1;
-
       service rethinkdb start;
     EOF
   end
