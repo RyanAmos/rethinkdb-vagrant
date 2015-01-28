@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 # Ensure a minimum Vagrant version to prevent potential issues.
-Vagrant.require_version '~> 1.5.0'
+Vagrant.require_version '>= 1.5.0'
 
 # Configure using Vagrant's version 2 API/syntax.
 Vagrant.configure(2) do |config|
@@ -13,6 +13,15 @@ Vagrant.configure(2) do |config|
   # Providers
   config.vm.provider :virtualbox do |p|
     p.customize ['modifyvm', :id, '--memory', '512', '--ioapic', 'on']
+  end
+
+  # Parallels Override
+  config.vm.provider "parallels" do |v, override|
+    override.vm.box = "parallels/ubuntu-14.04"
+    override.vm.box_version = ">= 1.0.2"
+    override.vm.box_url = "https://vagrantcloud.com/parallels/ubuntu-14.04"
+    v.memory = 2048
+    v.cpus = 2
   end
 
   # SSH
@@ -29,18 +38,18 @@ Vagrant.configure(2) do |config|
   # Provisioning
   config.vm.provision :shell do |sh|
     sh.inline = <<-EOF
-      export DEBIAN_FRONTEND=noninteractive;
+    export DEBIAN_FRONTEND=noninteractive;
 
-      # Add RethinkDB Source
-      apt-key adv --fetch-keys http://download.rethinkdb.com/apt/pubkey.gpg 2>&1;
-      echo "deb http://download.rethinkdb.com/apt $(lsb_release -sc) main" > /etc/apt/sources.list.d/rethinkdb.list;
-      apt-get update --assume-yes;
+    # Add RethinkDB Source
+    apt-key adv --fetch-keys http://download.rethinkdb.com/apt/pubkey.gpg 2>&1;
+    echo "deb http://download.rethinkdb.com/apt $(lsb_release -sc) main" > /etc/apt/sources.list.d/rethinkdb.list;
+    apt-get update --assume-yes;
 
-      # RethinkDB Install & Setup
-      apt-get install --assume-yes rethinkdb;
-      sed -e 's/# bind=127.0.0.1/bind=all/g' /etc/rethinkdb/default.conf.sample > /etc/rethinkdb/instances.d/default.conf;
-      rethinkdb create -d /var/lib/rethinkdb/instances.d/default 2>&1;
-      service rethinkdb start;
+    # RethinkDB Install & Setup
+    apt-get install --assume-yes rethinkdb;
+    sed -e 's/# bind=127.0.0.1/bind=all/g' /etc/rethinkdb/default.conf.sample > /etc/rethinkdb/instances.d/default.conf;
+    rethinkdb create -d /var/lib/rethinkdb/instances.d/default 2>&1;
+    service rethinkdb start;
     EOF
   end
 end
