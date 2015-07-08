@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 # Ensure a minimum Vagrant version to prevent potential issues.
-Vagrant.require_version '~> 1.5.0'
+Vagrant.require_version '>= 1.5.0'
 
 # Configure using Vagrant's version 2 API/syntax.
 Vagrant.configure(2) do |config|
