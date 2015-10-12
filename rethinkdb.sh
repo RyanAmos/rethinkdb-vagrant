@@ -2,7 +2,7 @@
 
 command -v vagrant &>/dev/null
 if [ $? -eq 1 ]; then
-  echo "vagrant: command now found"
+  echo "vagrant: command not found"
   echo "Download & install vagrant from:"
   echo "http://vagrantup.com/"
   exit 1;
