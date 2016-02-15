@@ -11,7 +11,7 @@ if not errorlevel 0 (
     exit /b 1
 )
 
-if not exist %0\..\Vagrantfile (
+if not exist %cd%\Vagrantfile (
   echo Could not find 'Vagrantfile'.
   exit /b 1
 )
